@@ -32,7 +32,9 @@ public class HexaBoard {
     for (int line = 1; line <= lineCount; line++) {
       caCells[line - 1] = new Cell[wordLength(line)];
       for (int col = 1; col <= abCells[line - 1].length; col++) {
-        caCells[line - 1][col - 1] = abCells[line - 1][col - 1];
+        int abLine = col + (line < sideSize ? (sideSize - line) : 0);
+        int abCol = (lineCount - line + 1) - (abLine >= sideSize ? abLine - sideSize  : 0);
+        caCells[line - 1][col - 1] = abCells[abLine - 1][abCol - 1];
       }
     }
   }
