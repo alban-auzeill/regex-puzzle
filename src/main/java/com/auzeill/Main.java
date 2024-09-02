@@ -7,14 +7,6 @@ import java.util.regex.Pattern;
 
 public class Main {
 
-  // Triangle
-  // ..C
-  // ./.\
-  // A...B
-  enum Direction {
-    A_B, B_C, C_A
-  }
-
   // from https://gist.github.com/LeventErkok/4942496
 
   public static final String[] A_B = {
@@ -73,7 +65,6 @@ public class Main {
   }
 
   public static void main(String[] args) {
-
     String text = "ABB";
     Pattern p = Pattern.compile("^(A|B)+$");
     Matcher matcher = p.matcher(text);
@@ -114,7 +105,11 @@ public class Main {
         }
       }
     }
+  }
 
+  record Pos(int line, int col) {
+    void rotateLeft() {
+    }
   }
 
   static class Cell {
@@ -132,6 +127,18 @@ public class Main {
       this.possibleCharacters = new ArrayList<>(DEFAULT_POSSIBLE_CHARACTERS);
     }
 
+  }
+
+  static class Word {
+    private final Direction direction;
+    private final int line;
+    private final List<Cell> cells;
+
+    public Word(Direction direction, int line) {
+      this.direction = direction;
+      this.line = line;
+      cells = new ArrayList<>();
+    }
   }
 
 }
