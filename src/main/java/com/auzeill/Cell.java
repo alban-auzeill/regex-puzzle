@@ -8,21 +8,22 @@ public final class Cell {
     .mapToObj(c -> (char) c)
     .toList();
 
-  private final int line;
-  private final int col;
-  private final List<Character> alternatives;
+  public final List<Pos> positions = new ArrayList<>(Direction.values().length);
+  public final List<Character> alternatives;
 
-  public Cell(int line, int col) {
-    this.line = line;
-    this.col = col;
+  public Cell(Pos pos) {
+    positions.add(pos);
     this.alternatives = new ArrayList<>(ALL_ALTERNATIVES);
   }
 
   public String text() {
-    return String.format("(%02d,%02d)", line, col);
+    return String.format("(%02d,%02d)", positions.getFirst().line(), positions.getFirst().col());
   }
 
   public String alternativesText() {
+    if (alternatives.size() == 1) {
+      return " " + alternatives.get(0) + " ";
+    }
     return String.format("%03d", alternatives.size());
   }
 
