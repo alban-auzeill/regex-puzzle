@@ -7,26 +7,28 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WordSolver implements Cell.ChangeListener {
+import static com.auzeill.Utils.precondition;
+
+public class LineSolver implements Cell.ChangeListener {
 
   /**
-   * Pattern to match the word, used to reduce the number of cell alternatives until we find one solution
+   * Pattern to match the line, used to reduce the number of cell alternatives until we find one solution
    */
   public final Pattern pattern;
 
   /**
-   * Line of the word
+   * Position of the line on the HexaBoard
    */
   public final Line line;
 
   /**
-   * Cells of the word, each cell contains a list of character alternatives
+   * Cells of the line, each cell contains a list of character alternatives
    */
   public final Cell[] cells;
 
   /**
-   * List of possible alternatives for the word prefix having a length of alternativesLength.
-   * If alternativesLength == wordLength() and there is only one alternative, the word is solved.
+   * List of possible alternatives for the line prefix having a length of alternativesLength.
+   * If alternativesLength == length() and there is only one alternative, the word is solved.
    */
   private List<String> alternatives;
 
@@ -35,7 +37,7 @@ public class WordSolver implements Cell.ChangeListener {
    */
   private int alternativesLength;
 
-  public WordSolver(Line line, Pattern pattern, Cell[] cells) {
+  public LineSolver(Line line, Pattern pattern, Cell[] cells) {
     this.line = line;
     this.pattern = pattern;
     this.cells = cells;
@@ -46,7 +48,7 @@ public class WordSolver implements Cell.ChangeListener {
     }
   }
 
-  public int wordLength() {
+  public int length() {
     return cells.length;
   }
 
@@ -76,11 +78,11 @@ public class WordSolver implements Cell.ChangeListener {
   }
 
   public boolean isSolved() {
-    return alternativesLength == wordLength() && alternatives.size() == 1;
+    return alternativesLength == length() && alternatives.size() == 1;
   }
 
   public long nextReduceComplexity() {
-    if (alternativesLength == wordLength()) {
+    if (alternativesLength == length()) {
       return Long.MAX_VALUE;
     }
     var nextAlternativesLength = alternativesLength + 1;
@@ -88,9 +90,7 @@ public class WordSolver implements Cell.ChangeListener {
   }
 
   public boolean reduce() {
-    if (isSolved()) {
-      throw new IllegalStateException("Already solved word at " + line + "', pattern: " + pattern.pattern() + ", solution '" + alternatives.getFirst());
-    }
+    precondition(!isSolved());
     alternativesLength++;
     var cell = cells[alternativesLength - 1];
     var newAlternatives = new ArrayList<String>(this.alternatives.size() * cell.alternatives.size());
@@ -124,7 +124,7 @@ public class WordSolver implements Cell.ChangeListener {
 
   private boolean matches(String candidate) {
     Matcher matcher = pattern.matcher(candidate);
-    if (candidate.length() == wordLength()) {
+    if (candidate.length() == length()) {
       return matcher.matches();
     } else {
       return matcher.matches() || matcher.hitEnd();

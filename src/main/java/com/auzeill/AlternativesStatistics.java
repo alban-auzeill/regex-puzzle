@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.auzeill.Utils.precondition;
+
 public class AlternativesStatistics {
 
   public final int length;
@@ -36,9 +38,7 @@ public class AlternativesStatistics {
   }
 
   private void add(List<Set<Character>> list, String alternative) {
-    if (alternative.length() != length) {
-      throw new IllegalArgumentException("alternative.length(): " + alternative.length() + " != length: " + length);
-    }
+    precondition(alternative.length() == length);
     count++;
     for (int i = 0; i < alternative.length(); i++) {
       list.get(i).add(alternative.charAt(i));

@@ -25,20 +25,20 @@ public class Main {
 
     long start = System.currentTimeMillis();
 
-    System.out.println(board.alternativesText(Direction.A_B));
+    System.out.println(board.text());
 
-    var reducerByLine = new TreeMap<Line, WordSolver>();
+    var reducerByLine = new TreeMap<Line, LineSolver>();
     for (Line line : board.allLines()) {
-      reducerByLine.put(line, new WordSolver(line, board.constraint(line), board.cells(line)));
+      reducerByLine.put(line, new LineSolver(line, board.constraint(line), board.cells(line)));
     }
 
     var reducers = new LinkedHashSet<>(board.allLines().stream().map(reducerByLine::get).toList());
     while (!reducers.isEmpty()) {
       var nextReduceToEvaluate = reducers.stream()
-        .min(Comparator.comparingLong(WordSolver::nextReduceComplexity))
+        .min(Comparator.comparingLong(LineSolver::nextReduceComplexity))
         .orElseThrow();
       if (!nextReduceToEvaluate.isSolved() && nextReduceToEvaluate.reduce()) {
-        System.out.println(board.alternativesText(Direction.A_B));
+        System.out.println(board.text());
       }
       if (nextReduceToEvaluate.isSolved()) {
         reducers.remove(nextReduceToEvaluate);

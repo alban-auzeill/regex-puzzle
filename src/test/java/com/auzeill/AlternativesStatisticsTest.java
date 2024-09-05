@@ -18,9 +18,7 @@ class AlternativesStatisticsTest {
     statistics.reject("bxc");
     statistics.reject("bxf");
     statistics.reject("bxe");
-    assertThatThrownBy(() -> statistics.accept("invalid"))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("alternative.length(): 7 != length: 3");
+    assertThatThrownBy(() -> statistics.accept("invalid")).hasMessage("Precondition failed");
     assertEquals(List.of(Set.of('b'), Set.of(), Set.of('e')), statistics.computeRejectedCharacters());
   }
 
