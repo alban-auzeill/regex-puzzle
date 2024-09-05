@@ -1,8 +1,8 @@
 package com.auzeill;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.TreeMap;
 
 public class Main {
 
@@ -23,21 +23,30 @@ public class Main {
         "[AM]*CM(RC)*R?", "([^MC]|MM|CC)*", "(E|CR|MN)*", "P+(..)\\1.*", "[CHMNOR]*I[CHMNOR]*", "(ND|ET|IN)[^X]*"
       );
 
+    long start = System.currentTimeMillis();
 
     System.out.println(board.alternativesText(Direction.A_B));
 
-    Set<Line> changedLines = new LinkedHashSet<>(board.allLines());
-    while (!changedLines.isEmpty()) {
-      var linesToEvaluate = new ArrayList<>(changedLines);
-      changedLines.clear();
-      for (Line line : linesToEvaluate) {
-        var report = new StringBuilder();
-        board.applyConstraints(line, report, changedLines);
-        System.out.print(report);
+    var reducerByLine = new TreeMap<Line, WordSolver>();
+    for (Line line : board.allLines()) {
+      reducerByLine.put(line, new WordSolver(line, board.constraint(line), board.cells(line)));
+    }
+
+    var reducers = new LinkedHashSet<>(board.allLines().stream().map(reducerByLine::get).toList());
+    while (!reducers.isEmpty()) {
+      var nextReduceToEvaluate = reducers.stream()
+        .min(Comparator.comparingLong(WordSolver::nextReduceComplexity))
+        .orElseThrow();
+      if (!nextReduceToEvaluate.isSolved() && nextReduceToEvaluate.reduce()) {
+        System.out.println(board.alternativesText(Direction.A_B));
+      }
+      if (nextReduceToEvaluate.isSolved()) {
+        reducers.remove(nextReduceToEvaluate);
       }
     }
 
-    System.out.println(board.alternativesText(Direction.A_B));
+    long end = System.currentTimeMillis();
+    System.out.println("Time: %,d ms".formatted(end - start));
   }
 
 }

@@ -28,7 +28,7 @@ public class HexaBoard {
     for (int line = 1; line <= lineCount; line++) {
       abCells[line - 1] = new Cell[wordLength(line)];
       for (int col = 1; col <= abCells[line - 1].length; col++) {
-        abCells[line - 1][col - 1] = new Cell(new Pos(Direction.A_B, line, col));
+        abCells[line - 1][col - 1] = new Cell(Pos.of(Direction.A_B, line, col));
       }
     }
     for (int line = 1; line <= lineCount; line++) {
@@ -38,7 +38,7 @@ public class HexaBoard {
         int abCol = line - (abLine >= sideSize ? 0 : (sideSize - abLine));
         Cell cell = abCells[abLine - 1][abCol - 1];
         bcCells[line - 1][col - 1] = cell;
-        cell.positions.add(new Pos(Direction.B_C, line, col));
+        cell.positions.add(Pos.of(Direction.B_C, line, col));
       }
     }
     for (int line = 1; line <= lineCount; line++) {
@@ -48,7 +48,7 @@ public class HexaBoard {
         int abCol = (lineCount - line + 1) - (abLine >= sideSize ? abLine - sideSize : 0);
         Cell cell = abCells[abLine - 1][abCol - 1];
         caCells[line - 1][col - 1] = cell;
-        cell.positions.add(new Pos(Direction.C_A, line, col));
+        cell.positions.add(Pos.of(Direction.C_A, line, col));
       }
     }
     constraints = new Pattern[Direction.values().length][];
